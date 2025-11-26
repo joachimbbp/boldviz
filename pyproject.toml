@@ -1,0 +1,11 @@
+[project]
+name = "boldviz"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = "==3.11.13" # version found in Blender 5.0.0
+dependencies = [
+    "bpy>=5.0.0",
+    "neurovolume>=0.1.0a5",
+    "numpy>=1.26.4",
+]
