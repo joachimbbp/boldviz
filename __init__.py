@@ -4,8 +4,55 @@
 #                               Imports
 # ----------------------------------------------------------------------------
 import os
-import neurovolume as nv
 import bpy
+import sys
+import site
+import logging
+import subprocess
+import threading
+
+# Some copypasta from https://medium.com/@antoine.boucher012/a-method-to-install-python-packages-for-add-ons-plugins-in-blender-windows-blender-4-2-98bcbe10fa81
+# Set up logging
+def display_message(message, title="Notification", icon='INFO'):
+    """Show a popup message in Blender."""
+    def draw(self, context):
+        self.layout.label(text=message)
+    def show_popup():
+        bpy.context.window_manager.popup_menu(draw, title=title, icon=icon)
+        return None  # Stops timer
+    bpy.app.timers.register(show_popup)
+# Set up logging
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
+
+def get_modules_path():
+    """Return a writable directory for installing Python packages."""
+    return bpy.utils.user_resource("SCRIPTS", path="modules", create=True)
+
+def install_package(package, modules_path):
+    """Install a single package using Blender's Python."""
+    try:
+        logger.info(f"Installing {package}...")
+        subprocess.check_call([
+            sys.executable,
+            "-m",
+            "pip",
+            "install",
+            "--upgrade",
+            "--target",
+            modules_path,
+            package
+        ])
+        logger.info(f"{package} installed successfully.")
+    except subprocess.CalledProcessError as e:
+        logger.error(f"Failed to install {package}. Error: {e}")
+        display_message(f"Failed to install {package}. Check console for details.", icon='ERROR')
+
+
+install_package("neurovolume==0.1.0a7", get_modules_path())
+
+import neurovolume as nv
+nv.hello()
 
 # :_: ------------------------------------------------------------------------
 #                               User Set Path
@@ -16,14 +63,14 @@ import bpy
 # USERSET:
 user_set_output_path = "/Users/joachimpfefferkorn/repos/neurovolume/output"
 user_set_default_nifti = (
-    "/Users/joachimpfefferkorn/repos/neurovolume/media/sub-01_T1w.nii"  # optional
+    "/Users/joachimpfefferkorn/repos/neurovolume/tests/data/sub-01_task-emotionalfaces_run-1_bold.nii"  # optional
 )
 
 # :_: ------------------------------------------------------------------------
 #                               Setup
 # ------------------------------------------------------------------------------
 bl_info = {
-    "name": "Neurovolume",
+    "name": "boldviz",
     "author": "Joachim Pfefferkorn",
     "description": "",
     "blender": (2, 80, 0),
@@ -32,7 +79,7 @@ bl_info = {
     "warning": "",
     "category": "Generic",
 }
-print("Neurovolume is running")
+print("boldviz is running")
 
 
 # :_: ------------------------------------------------------------------------
@@ -94,15 +141,15 @@ def load_nifti1(filepath: str, normalize: bool = True):
 # ------------------------------------------------------------------------------
 
 
-class Neurovolume(bpy.types.Panel):
+class BoldViz(bpy.types.Panel):
     # Eventually this will probably just be "Load Volumes." Other functionality can go in other panels
-    """Main Neurovolume Panel"""
+    """Main boldviz Panel"""
 
-    bl_label = "Neurovolume"
+    bl_label = "boldviz"
     bl_idname = "VIEW3D_PT_nv"
     bl_space_type = "VIEW_3D"  # in the 3D viewport
     bl_region_type = "UI"  # in the UI panel
-    bl_category = "Neurovolume"  # name of panel
+    bl_category = "boldvz"  # name of panel
 
     def draw(self, context):
         self.layout.prop(context.scene, "path_input")
@@ -178,7 +225,7 @@ def unregister_properties():
     # del bpy.types.Scene.volume_status
 
 
-classes = [Neurovolume, LoadVolume]
+classes = [BoldViz, LoadVolume]
 
 
 def register():
@@ -197,4 +244,4 @@ if __name__ == "__main__":
     register()
 
 
-print("eof __init__.py")
+print("eof __init__.py of boldviz")
