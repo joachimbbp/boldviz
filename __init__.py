@@ -60,8 +60,7 @@ nv.hello()
 #                                           the the corresponding paths
 #                                           on your machine
 # ------------------------------------------------------------------------------\
-# USERSET:
-user_set_output_path = "/Users/joachimpfefferkorn/repos/neurovolume/output"
+user_set_output_path = "./output"
 user_set_default_nifti = (
     "/Users/joachimpfefferkorn/repos/neurovolume/tests/data/sub-01_task-emotionalfaces_run-1_bold.nii"  # optional
 )
@@ -103,7 +102,7 @@ def build_volume_data(filepath) -> str:
 
 def load_nifti1(filepath: str, normalize: bool = True):
     vdb_path = os.path.abspath(nv.nifti1_to_VDB(filepath, normalize))
-
+    print("vdb path: ", vdb_path)
     n_frames = nv.num_frames(filepath, "NIfTI1")
     if n_frames == 1:
         bpy.ops.object.volume_import(
