@@ -11,8 +11,10 @@ import logging
 import subprocess
 import threading
 
+neurovolume_version = "0.1.0a10"
+vdb_save_dir = "./output"
+
 # Some copypasta from https://medium.com/@antoine.boucher012/a-method-to-install-python-packages-for-add-ons-plugins-in-blender-windows-blender-4-2-98bcbe10fa81
-# Set up logging
 def display_message(message, title="Notification", icon='INFO'):
     """Show a popup message in Blender."""
     def draw(self, context):
@@ -49,7 +51,7 @@ def install_package(package, modules_path):
         display_message(f"Failed to install {package}. Check console for details.", icon='ERROR')
 
 
-install_package("neurovolume==0.1.0a7", get_modules_path())
+install_package(f"neurovolume=={neurovolume_version}", get_modules_path())
 
 import neurovolume as nv
 nv.hello()
@@ -60,8 +62,7 @@ nv.hello()
 #                                           the the corresponding paths
 #                                           on your machine
 # ------------------------------------------------------------------------------\
-# USERSET:
-user_set_output_path = "/Users/joachimpfefferkorn/repos/neurovolume/output"
+user_set_output_path = "./output"
 user_set_default_nifti = (
     "/Users/joachimpfefferkorn/repos/neurovolume/tests/data/sub-01_task-emotionalfaces_run-1_bold.nii"  # optional
 )
@@ -102,8 +103,8 @@ def build_volume_data(filepath) -> str:
 
 
 def load_nifti1(filepath: str, normalize: bool = True):
-    vdb_path = os.path.abspath(nv.nifti1_to_VDB(filepath, normalize))
-
+    vdb_path = os.path.abspath(nv.nifti1_to_VDB(filepath,vdb_save_dir, normalize))
+    print("vdb path: ", vdb_path)
     n_frames = nv.num_frames(filepath, "NIfTI1")
     if n_frames == 1:
         bpy.ops.object.volume_import(
