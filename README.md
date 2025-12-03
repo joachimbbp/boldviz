@@ -11,6 +11,11 @@ Install the Blender plugin using one of the following methods:
 - [Via the Add-ons section](https://docs.blender.org/manual/en/latest/editors/preferences/addons.html)
 - Copy-pasting the add-on into Blender's [Text-editor](https://docs.blender.org/manual/en/latest/editors/text_editor.html) and then clicking the triangular "play" button to run.
 
+To load a scan, paste the path into the `NIfTI File` field in the boldviz window and press `Load VDB from NIfTI`.
+
+Add materials, render, and enjoy!
+![Render of a non-skull stripped MNI Template](readme_media/boldviz_alpha10.jpg)
+
 # 🧠 Dataset Citation
 This software was tested using the following datasets.
 
